@@ -1,0 +1,11 @@
+export default () => ({
+    port: parseInt(process.env.PORT, 10) || 3000,
+    redis: {
+        url: process.env.REDIS_URL || 'redis://localhost:6379',
+    },
+    redisConstants: {
+        queueName: 'processQueue',
+        pubSubName: 'processPubSub',
+        leaderboardKey: 'leaderboard',
+    },
+});

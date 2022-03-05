@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { RedisService } from 'src/redis/redis.service';
 import { Leader } from './leader.interface';
 
 @Injectable()
 export class BoardService {
-    getLeaders(): Leader[] {
-        return [
-            { name: 'A', time: 1.024 },
-            { name: 'B', time: 0.24 },
-        ];
+    constructor(
+        @Inject('REDIS_CLIENT') private readonly redisService: RedisService,
+    ) {}
+
+    getLeaders(): Promise<Leader[]> {
+        return this.redisService.getLeaders();
     }
 }
