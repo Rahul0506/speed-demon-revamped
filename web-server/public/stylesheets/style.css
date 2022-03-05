@@ -1,0 +1,52 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00b7ff;
+}
+
+rect {
+  fill: steelblue;
+  stroke: white;
+  color: white;
+}
+
+line {
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.bar text {
+  fill: #fff;
+  font: 10px sans-serif;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.histogram {
+  width: 50%;
+  margin-left: 25%;
+}
+
+pre {
+  text-align: left;
+}
+
+.specification-line {
+  fill: none;
+  stroke: #ff0000;
+  stroke-width: 1px;
+  stroke-dasharray: 5, 5;
+  shape-rendering: auto;
+}
