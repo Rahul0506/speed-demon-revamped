@@ -1,5 +1,5 @@
 export default () => ({
-    port: parseInt(process.env.PORT, 10) || 3000,
+    port: parseInt(process.env.PORT, 10) || 8080,
     redis: {
         url: process.env.REDISCLOUD_URL || 'redis://localhost:6379',
     },
