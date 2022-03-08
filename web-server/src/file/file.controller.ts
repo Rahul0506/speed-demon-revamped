@@ -3,13 +3,13 @@ import { Response } from 'express';
 import { createReadStream } from 'fs';
 import { join } from 'path';
 
-@Controller('woopwoop')
+@Controller()
 export class FileController {
-    @Get(':filename')
+    @Get('woopwoop/:filename')
     getFile(@Param('filename') filename: string, @Res() res: Response) {
         const file = createReadStream(
             join(__dirname, '..', '..', 'temp', filename),
         );
-        return new StreamableFile(file);
+        file.pipe(res);
     }
 }
