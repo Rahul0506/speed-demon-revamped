@@ -108,13 +108,15 @@ export class SubmitService {
             .filter((elem, index) => index % 2)
             .map((str) => parseInt(str) / 1000);
 
+        console.error(json.compileError || json.runtimeError);
+
         return {
             title: 'Submission Evaluated',
             correct: json.success,
             results: json.results,
             runtime: json.time / 1000,
             filename: json.classname,
-            error: json.runtimeError || json.compileError,
+            error: json.compileError,
             allTimes: JSON.stringify(scores),
         };
     }
