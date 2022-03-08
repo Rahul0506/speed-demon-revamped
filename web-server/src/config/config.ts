@@ -7,5 +7,8 @@ export default () => ({
         queueName: 'processQueue',
         pubSubName: 'processPubSub',
         leaderboardKey: 'leaderboard',
+        secretNamesKey: 'secretName',
+        inQueueKey: 'inQueue',
+        resultsKey: 'results',
     },
 });

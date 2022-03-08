@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
+import { isValid } from 'shortid';
 import { storageOptions } from 'src/config/storage.config';
 import { SubmitService } from './submit.service';
 
@@ -27,24 +28,61 @@ export class SubmitController {
 
     @Post('/submit')
     @UseInterceptors(FileInterceptor('file', { storage: storageOptions }))
-    uploadSubmission(
+    async uploadSubmission(
         @Req() req: Request,
         @Res() res: Response,
         @UploadedFile() file: Express.Multer.File,
     ) {
-        console.log(file.originalname);
         console.log(file.filename);
-        console.log(file.path);
-        const id = file.filename;
-        res.redirect(`/submission/${id}`);
+        console.log(file.mimetype);
+        console.log(file.originalname);
+
+        try {
+            const id = await this.submitService.processSubmission(req, file);
+            res.redirect(`/submission/${id}`);
+        } catch (err) {
+            return res.render('upload', {
+                title: 'New Submission',
+                error: err.message,
+            });
+        }
     }
 
     @Get('/submission/:id')
-    viewSubmission(@Param() params, @Res() res: Response) {
-        console.log(params.id);
-        return res.render('judged', {
-            title: 'Submission Evaluated',
-            filename: params.id,
-        });
+    async viewSubmission(@Param() params, @Res() res: Response) {
+        const id = params.id;
+        console.log(id);
+
+        const queueLen = await this.submitService.getQueueLen();
+        if (!isValid(id)) {
+            return res.render('notfound', {
+                title: 'Submission Not Found',
+                queueNumber: queueLen,
+            });
+        }
+
+        try {
+            const result = await this.submitService.fetchResult(id);
+
+            return res.render('judged', result);
+        } catch (err) {
+            const msg: string = err.message;
+            if (msg == null) {
+                return res.render('notfound', {
+                    title: 'Submission Not Found',
+                    queueNumber: queueLen,
+                });
+            } else if (msg == '') {
+                return res.render('pending', {
+                    title: 'Submission Pending',
+                    queueNumber: queueLen,
+                });
+            } else {
+                return res.render('error', {
+                    message: 'Internal Server Error',
+                    error: err,
+                });
+            }
+        }
     }
 }

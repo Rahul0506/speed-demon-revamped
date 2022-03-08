@@ -6,6 +6,9 @@ interface Constants {
     queueName: string;
     pubSubName: string;
     leaderboardKey: string;
+    secretNamesKey: string;
+    inQueueKey: string;
+    resultsKey: string;
 }
 
 @Injectable()
@@ -29,31 +32,61 @@ export class RedisService {
     }
 
     async getLeaders(): Promise<Leader[]> {
-        console.log(this.constants.leaderboardKey);
-        try {
-            const results = await this.client.ZRANGE_WITHSCORES(
-                this.constants.leaderboardKey,
-                0,
-                15,
-            );
+        const results = await this.client.ZRANGE_WITHSCORES(
+            this.constants.leaderboardKey,
+            0,
+            15,
+        );
 
-            const leaders: Leader[] = [];
-            results.forEach((element) => {
-                if (element.value) {
-                    leaders.push({
-                        name: element.value,
-                        time: element.score / 1000,
-                    });
-                }
-            });
-            return leaders;
-        } catch (err) {
-            console.log('Oh no');
-            console.error(err);
-        }
+        const leaders: Leader[] = [];
+        results.forEach((element) => {
+            if (element.value) {
+                leaders.push({
+                    name: element.value,
+                    time: element.score / 1000,
+                });
+            }
+        });
+        return leaders;
+    }
+
+    getBoard() {
+        return this.client.ZRANGE_WITHSCORES(
+            this.constants.leaderboardKey,
+            0,
+            -1,
+        );
     }
 
     getQueueLen(): Promise<number> {
         return this.client.LLEN(this.constants.queueName);
+    }
+
+    getNameBySecret(secret: string): Promise<string> {
+        return this.client.HGET(this.constants.secretNamesKey, secret);
+    }
+
+    checkQueue(secret: string) {
+        return this.client.SISMEMBER(this.constants.inQueueKey, secret);
+    }
+
+    async setQueue(secret: string) {
+        await this.client.SADD(this.constants.inQueueKey, secret);
+    }
+
+    async setResult(subId: string) {
+        await this.client.HSET(this.constants.resultsKey, subId, '');
+    }
+
+    getResult(subId: string) {
+        return this.client.HGET(this.constants.resultsKey, subId);
+    }
+
+    async sendData(jsonString: string) {
+        await this.client.LPUSH(this.constants.queueName, jsonString);
+    }
+
+    async notifyGrader() {
+        this.client.PUBLISH(this.constants.pubSubName, 'new');
     }
 }
