@@ -58,11 +58,11 @@ export class SubmitService {
             file.filename,
             file.originalname,
         );
-        try {
-            await move(srcPath, destPath);
-        } catch (err) {
-            console.error(err);
-        }
+        // try {
+        //     await move(srcPath, destPath);
+        // } catch (err) {
+        //     console.error(err);
+        // }
 
         // Send data to grader
         const data = {
