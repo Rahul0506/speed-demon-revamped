@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { RedisService } from 'src/redis/redis.service';
+import { move } from 'fs-extra';
+import { join } from 'path';
 
 @Injectable()
 export class SubmitService {
@@ -47,6 +49,21 @@ export class SubmitService {
             throw Error('Previous submission already in queue');
         }
 
+        const srcPath = file.path;
+        const destPath = join(
+            __dirname,
+            '..',
+            '..',
+            'uploads',
+            file.filename,
+            file.originalname,
+        );
+        try {
+            await move(srcPath, destPath);
+        } catch (err) {
+            console.error(err);
+        }
+
         // Send data to grader
         const data = {
             key: file.filename,
@@ -59,14 +76,17 @@ export class SubmitService {
             this.redisService.setQueue(secret),
             this.redisService.setResult(file.filename),
             this.redisService.sendData(JSON.stringify(data)),
+            this.redisService.notifyGrader(),
         ]);
         return data.key;
     }
 
     async fetchResult(id: string) {
         const jsonString: string = await this.redisService.getResult(id);
-        if (jsonString == null || jsonString == '') {
-            throw Error(jsonString);
+        if (jsonString == null) {
+            throw Error('NF');
+        } else if (jsonString == '') {
+            throw Error('PE');
         }
 
         var json;

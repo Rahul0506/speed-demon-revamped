@@ -33,7 +33,6 @@ export class SubmitController {
         @Res() res: Response,
         @UploadedFile() file: Express.Multer.File,
     ) {
-        console.log(file.filename);
         console.log(file.mimetype);
         console.log(file.originalname);
 
@@ -51,7 +50,6 @@ export class SubmitController {
     @Get('/submission/:id')
     async viewSubmission(@Param() params, @Res() res: Response) {
         const id = params.id;
-        console.log(id);
 
         const queueLen = await this.submitService.getQueueLen();
         if (!isValid(id)) {
@@ -67,12 +65,12 @@ export class SubmitController {
             return res.render('judged', result);
         } catch (err) {
             const msg: string = err.message;
-            if (msg == null) {
+            if (msg == 'NF') {
                 return res.render('notfound', {
                     title: 'Submission Not Found',
                     queueNumber: queueLen,
                 });
-            } else if (msg == '') {
+            } else if (msg == 'PE') {
                 return res.render('pending', {
                     title: 'Submission Pending',
                     queueNumber: queueLen,
@@ -80,7 +78,7 @@ export class SubmitController {
             } else {
                 return res.render('error', {
                     message: 'Internal Server Error',
-                    error: err,
+                    error: 'Please contact',
                 });
             }
         }
