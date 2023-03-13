@@ -35,7 +35,6 @@ export class SubmitController {
     ) {
         console.log(file.mimetype);
         console.log(file.originalname);
-        console.log(file.destination);
         console.log(file.path);
 
         try {
