@@ -5,7 +5,7 @@ const redis = require("redis");
 const fs = require("fs");
 const csv = require("csv-parser");
 
-const constants = require("../constants");
+const constants = require("./constants");
 const { testfiles, redisConnectionOptions } = constants;
 
 bluebird.promisifyAll(redis.RedisClient.prototype);

@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "startgrader": "node grader/grader.js"
+    "start": "node grader.js"
   },
   "dependencies": {
     "bluebird": "^3.5.0",

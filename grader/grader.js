@@ -5,7 +5,7 @@ let redis = require("redis");
 let cw = require("core-worker");
 let fs = require("fs");
 
-const constants = require("../constants");
+const constants = require("./constants");
 const testfiles = constants.testfiles;
 const { getDockerCommand, getExecutionTimeAllotment } = require("./utils");
 
@@ -26,7 +26,7 @@ function start() {
     listen();
 }
 
-["grader/java", "downloads"].forEach((folder) => {
+["java", "downloads"].forEach((folder) => {
     fs.mkdir(folder, function (err) {
         console.log(err || `${folder} already exists`);
     });
@@ -78,15 +78,15 @@ async function processTestCase(timeAllotment) {
 
             await cw
                 .process(
-                    `unzip -j -o -d grader/java/${folderkey} downloads/${folderkey}`
+                    `unzip -j -o -d java/${folderkey} downloads/${folderkey}`
                 )
                 .death();
         } else {
-            await cw.process(`mkdir grader/java/${folderkey}`).death();
+            await cw.process(`mkdir java/${folderkey}`).death();
 
             await cw
                 .process(
-                    `wget -O grader/java/${folderkey}/${classname}.java ${constants.webServerIP}/${folderkey}`
+                    `wget -O java/${folderkey}/${classname}.java ${constants.webServerIP}/${folderkey}`
                 )
                 .death();
         }
@@ -98,7 +98,7 @@ async function processTestCase(timeAllotment) {
     try {
         compileProcess = getDockerCommand(
             `javac -cp /submission ./submission/${classname}.java`,
-            [`grader/java/${folderkey}:/submission`]
+            [`java/${folderkey}:/submission`]
         );
         compileProcess = cw.process(compileProcess);
         await compileProcess.death();
@@ -138,10 +138,10 @@ async function runTestCase(filedata, files, totalTimeout) {
         proc = getDockerCommand(
             `java -classpath /submission -Xmx1500m ${filedata.classname} /testfile`,
             [
-                `grader/java/${filedata.key}:/submission`,
+                `java/${filedata.key}:/submission`,
                 // mount as readonly, so people can't do funny things like modify the input file
                 // Also, only mount the input file so they can't cheat by looking for the .out file
-                `grader/testcases/${filename}:/testfile:ro`,
+                `testcases/${filename}:/testfile:ro`,
             ]
         );
         startTime = Date.now();

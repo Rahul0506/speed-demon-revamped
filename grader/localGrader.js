@@ -6,7 +6,7 @@ let Docker = require("dockerode");
 let child_process = require("child_process");
 let cw = require("core-worker");
 
-var constants = require("../constants");
+var constants = require("./constants");
 var testfiles = constants.testfiles;
 
 let db = redis.createClient(constants.redisConnectionOptions);

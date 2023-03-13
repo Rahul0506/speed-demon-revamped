@@ -1,5 +1,5 @@
 const { minTotalExecution, maxTotalExecution, targetWaitTime } =
-    require("../constants").timeouts;
+    require("./constants").timeouts;
 
 const cwd = process.cwd();
 

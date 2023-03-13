@@ -3,15 +3,15 @@ require("dotenv").config();
 
 // Automatically reads from .in files in grader/testfiles
 var testfiles = {};
-fs.mkdir("grader/testcases", function (err) {
+fs.mkdir("testcases", function (err) {
   console.log(err || "testcases already exists");
 });
 var files = fs
-  .readdirSync("grader/testcases")
+  .readdirSync("testcases")
   .filter(str => str.indexOf(".out") != -1);
 for (var i = 0; i < files.length; i++) {
   let outfile = files[i];
-  let result = Number(fs.readFileSync(`grader/testcases/${outfile}`));
+  let result = Number(fs.readFileSync(`testcases/${outfile}`));
   let infile = outfile.replace(".out", ".in");
   testfiles[infile] = result;
 }
@@ -42,7 +42,7 @@ module.exports = {
   cheatersKey: "cheaters",
   secretsNamesKey: "secretName",
   inQueueKey: "inQueue",
-  webServerIP: process.env.SERVER_URL || "127.0.0.1:3000",
+  webServerIP: process.env.SERVER_URL || "127.0.0.1:8080",
   redisConnectionOptions: process.env.REDIS_URL || {},
   validKeys: (process.env.VALID_KEYS || "").split(",").reduce((hash, key) => {
     hash[key] = true;
