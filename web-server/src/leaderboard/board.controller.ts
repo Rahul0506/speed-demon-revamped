@@ -9,6 +9,6 @@ export class BoardController {
     @Render('index')
     async getBoard() {
         const leaders = await this.boardService.getLeaders();
-        return { title: 'CS2040S AY21/22 Speed Demon Leaderboard', leaders };
+        return { title: 'CS2040S AY22/23 Speed Demon Leaderboard', leaders };
     }
 }
