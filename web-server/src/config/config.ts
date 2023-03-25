@@ -10,5 +10,6 @@ export default () => ({
         secretNamesKey: 'secretName',
         inQueueKey: 'inQueue',
         resultsKey: 'results',
+        revokedKey: 'revoked',
     },
 });

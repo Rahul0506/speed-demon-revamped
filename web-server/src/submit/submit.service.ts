@@ -43,6 +43,11 @@ export class SubmitService {
             throw Error('Invalid file type. Only .zip and .java allowed');
         }
 
+        // Check if submission privs are revoked
+        const revoked = await this.redisService.checkRevoked(secret);
+        if (revoked) {
+            throw Error('Your submission privileges have been revoked');
+        }
         // Check previous submission in queue
         const inQueue = await this.redisService.checkQueue(secret);
         if (inQueue) {

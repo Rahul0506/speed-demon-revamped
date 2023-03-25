@@ -9,6 +9,7 @@ interface Constants {
     secretNamesKey: string;
     inQueueKey: string;
     resultsKey: string;
+    revokedKey: string;
 }
 
 @Injectable()
@@ -68,6 +69,10 @@ export class RedisService {
 
     checkQueue(secret: string) {
         return this.client.SISMEMBER(this.constants.inQueueKey, secret);
+    }
+
+    checkRevoked(secret: string) {
+        return this.client.SISMEMBER(this.constants.revokedKey, secret);
     }
 
     async setQueue(secret: string) {
